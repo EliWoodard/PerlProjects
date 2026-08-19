@@ -1,0 +1,3 @@
+Legolas,Ranger,19
+Gandalf,Wizard,20
+Aragorn,Warrior,18
