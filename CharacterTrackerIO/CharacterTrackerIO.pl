@@ -1,11 +1,12 @@
 use strict;
 use warnings;
+use Fcntl; # Required for O_RDWR and O_CREAT constants
 
 # File name
 my $filename = 'characterData.txt';
 
-# Open the file in write mode ('>')
-open(my $fh, '+<', $filename) or die "Could not open file '$filename' $!";
+# Creates a character data file, if none exist, in read / write mode
+sysopen(my $fh, $filename, O_RDWR | O_CREAT) or die "Could not open file '$filename': $!";
 
 # Initalize hash value
 my %characters;
@@ -81,7 +82,7 @@ truncate($fh, 0) or die "Cannot truncate file: $!";
 # Reset file pointer
 seek($fh, 0, 0) or die "Cannot seek to beginning: $!";
 
-foreach my $key (keys %characters)
+foreach my $key (sort keys %characters)
 {
     # Get hash value for selected key
     my @hashValue = @{$characters{$key}};
@@ -145,9 +146,18 @@ sub GetCharacter
 
 sub ViewAllCharacters()
 {
-    foreach my $key (keys %characters)
+    my $count = keys %characters;
+
+    if ($count > 0)
     {
-        my @hashValue = @{$characters{$key} };
-        print "$key is a $hashValue[0], and level $hashValue[1]\n";
+        foreach my $key (sort keys %characters)
+        {
+            my @hashValue = @{$characters{$key} };
+            print "$key is a $hashValue[0], and level $hashValue[1]\n";
+        }
+    }
+    else
+    {
+        print "No character data found.\n";
     }
 }
