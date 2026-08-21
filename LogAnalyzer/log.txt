@@ -1,0 +1,6 @@
+[INFO] User logged in: Elijah
+[ERROR] Database connection failed
+[INFO] User logged in: Sarah
+[WARNING] Disk usage above 80%
+[ERROR] Database connection failed
+[INFO] User logged out: Elijah
