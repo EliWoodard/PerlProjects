@@ -1,0 +1,5 @@
+The quick brown fox jumps over the lazy dog.
+Python and Perl are both useful programming languages.
+Software development requires practice and patience.
+Learning a new language takes time.
+Small projects are a great way to learn.
