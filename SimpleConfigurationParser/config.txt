@@ -1,0 +1,5 @@
+name=MyApplication
+version=1.4.2
+debug=true
+max_users=100
+environment=development
