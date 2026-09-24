@@ -13,3 +13,12 @@ with open(userfile, "w") as f:
     json.dump(data, f)
 
 subprocess.run(["perl", "ProcessData.pl", userfile])
+
+print("\n===== Total Resource Usage =====\n");
+
+with open("summary.json", "r") as f:
+    summary = json.load(f)
+
+print("Total CPU: " + str(summary["totalCPU"]))
+print("Total Memory: " + str(summary["totalMemory"]))
+print("Total Disk: " + str(summary["totalDisk"]))

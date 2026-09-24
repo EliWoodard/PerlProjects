@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use JSON qw( decode_json );
+use JSON qw( decode_json encode_json );
 
 my $fileName = $ARGV[0];
 
@@ -24,8 +24,14 @@ foreach my $detail (@$data) {
     print "Name: " . $detail->{name} . " - CPU: " . $detail->{cpu} . " - Memory: " . $detail->{memory} . " - Disk: " . $detail->{disk} . "\n";
 }
 
-print("===== Total Resource Usage =====\n\n");
+my $summary = {
+    totalCPU => $totalCPU,
+    totalMemory => $totalMemory,
+    totalDisk => $totalDisk
+};
 
-print "Total CPU: $totalCPU\n";
-print "Total Memory: $totalMemory\n";
-print "Total Disk: $totalDisk\n";
+my $newFileName = "summary.json";
+
+open(my $fh2, ">", $newFileName) or die "Can't open '$newFileName': $!";
+print $fh2 encode_json($summary);
+close($fh2) or die "Cannot close file: $!";
