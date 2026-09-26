@@ -1,1 +1,1 @@
-{"warning_count":4,"last_entry":"2026-09-24 18:26:25 WARNING server5 CPU usage above threshold\n","info_count":1,"first_entry":"2026-09-24 18:26:11 WARNING server5 CPU usage above threshold\n","error_count":5,"total_entries":10}
+{"total_entries":10,"most_common_error":"server4 Server timeout occurred","warning_count":1,"error_count":7,"last_entry":"2026-09-25 17:55:12 INFO server3 User login successful\n","first_entry":"2026-09-25 17:55:00 INFO server2 User login successful\n","info_count":2,"server_with_most_errors":"4"}

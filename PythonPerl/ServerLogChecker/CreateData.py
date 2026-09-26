@@ -14,8 +14,16 @@ for _ in range(10):
         messageType = "INFO"
         messageConcern = "User login successful"
     elif randType == 2:
-        messageType = "ERROR"
-        messageConcern = "Database connection failed"
+        randError = randint(1, 3)
+        if randError == 1:
+            messageType = "ERROR"
+            messageConcern = "Database connection failed"
+        elif randError == 2:
+            messageType = "ERROR"
+            messageConcern = "Server timeout occurred"
+        else:
+            messageType = "ERROR"
+            messageConcern = "Disk space low"
     else:
         messageType = "WARNING"
         messageConcern = "CPU usage above threshold"
