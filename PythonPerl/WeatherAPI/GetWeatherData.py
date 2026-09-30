@@ -1,4 +1,6 @@
+import json
 import requests
+import subprocess
 
 locations = [
     (39.7456, -97.0892),
@@ -17,13 +19,17 @@ for location in locations:
 
     forecast_url = data["properties"]["forecast"]
 
-    print(forecast_url)
-
     # remove :80 from url if present
     if ":80" in forecast_url:
         forecast_url = forecast_url.replace(":80", "")
 
     forecast_response = requests.get(forecast_url, headers=headers)
 
-    print(forecast_response.status_code)
-    print(forecast_response.json())
+    if forecast_response.status_code == 200:
+        print("Forecast data retrieved successfully.")
+        with open("countries.json", "w") as f:
+            f.write(json.dumps(forecast_response.json()) + "\n")
+    else:
+        print(f"Failed to retrieve forecast data. Status code: {forecast_response.status_code}")
+
+    subprocess.run(["perl", "ProcessWeatherData.pl"], check=True)
