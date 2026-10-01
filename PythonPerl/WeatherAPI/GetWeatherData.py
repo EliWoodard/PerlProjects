@@ -3,8 +3,7 @@ import requests
 import subprocess
 
 locations = [
-    (39.7456, -97.0892),
-    # add another coordinate here
+    (45.6387, -122.6615)
 ]
 
 headers = {
