@@ -3,12 +3,15 @@ import requests
 import subprocess
 
 locations = [
-    (45.6387, -122.6615)
+    (45.6387, -122.6615), # Washington Vancouver
+    [40.7128, -74.0060] # New York City
 ]
 
 headers = {
     "User-Agent": "MyWeatherApp/1.0"
 }
+
+forecasts = []
 
 for location in locations:
     url = f"https://api.weather.gov/points/{location[0]},{location[1]}"
@@ -18,7 +21,7 @@ for location in locations:
 
     forecast_url = data["properties"]["forecast"]
 
-    # remove :80 from url if present
+    # Remove :80 from URL if present
     if ":80" in forecast_url:
         forecast_url = forecast_url.replace(":80", "")
 
@@ -26,9 +29,17 @@ for location in locations:
 
     if forecast_response.status_code == 200:
         print("Forecast data retrieved successfully.")
-        with open("countries.json", "w") as f:
-            f.write(json.dumps(forecast_response.json()) + "\n")
+
+        forecasts.append(forecast_response.json())
+
     else:
         print(f"Failed to retrieve forecast data. Status code: {forecast_response.status_code}")
 
-    subprocess.run(["perl", "ProcessWeatherData.pl"], check=True)
+        forecasts.append({
+            "error": f"Failed to retrieve forecast data. Status code: {forecast_response.status_code}"
+        })
+
+with open("weather.json", "w") as f:
+    json.dump(forecasts, f, indent=4)
+
+subprocess.run(["perl", "ProcessWeatherData.pl"], check=True)
