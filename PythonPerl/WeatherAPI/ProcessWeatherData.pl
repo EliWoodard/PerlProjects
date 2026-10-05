@@ -22,6 +22,9 @@ for my $location_forecast (@$data) {
 
     print "Location: $location_forecast->{location}\n";
 
+    my $average_temperature = 0;
+    my $period_count = 0;
+
     # Period number
     for my $period (@{$location_forecast->{properties}->{periods}}) {
         print "Period Number: $period->{number}\n";
@@ -40,14 +43,25 @@ for my $location_forecast (@$data) {
         my $end_date_only = $end_time_formatted;
         $end_date_only =~ s/ .*//;
         print "End Date Only: $end_date_only\n";
-        print "Is Daytime: $period->{isDaytime}\n";
+        if ($period->{isDaytime}) {
+            print "Is Daytime: true\n";
+        }
+        else {
+            print "Is Daytime: false\n";
+        }
         print "Temperature: $period->{temperature} $period->{temperatureUnit}\n";
-        print "Temperature Trend: " . (defined $period->{temperatureTrend} ? $period->{temperatureTrend} : "N/A") . "\n";
         print "Probability of Precipitation: " . (defined $period->{probabilityOfPrecipitation}->{value} ? $period->{probabilityOfPrecipitation}->{value} : 0) . "%\n";
         print "Wind Speed: $period->{windSpeed}\n";
         print "Wind Direction: $period->{windDirection}\n";
         print "Short Forecast: $period->{shortForecast}\n";
         print "Detailed Forecast: $period->{detailedForecast}\n";
         print "\n";
+
+        # Accumulate temperature for average calculation
+        $average_temperature += $period->{temperature};
+        $period_count++;
+
     }
+    my $average = $average_temperature / $period_count;
+    print "Average Temperature: $average\n";
 }
