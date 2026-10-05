@@ -3,8 +3,8 @@ import requests
 import subprocess
 
 locations = [
-    (45.6387, -122.6615), # Washington Vancouver
-    [40.7128, -74.0060] # New York City
+    [45.6387, -122.6615, "Vancouver, Washington"],
+    [40.7128, -74.0060, "New York City"]
 ]
 
 headers = {
@@ -29,8 +29,10 @@ for location in locations:
 
     if forecast_response.status_code == 200:
         print("Forecast data retrieved successfully.")
-
         forecasts.append(forecast_response.json())
+
+        #append location value to the forecast data
+        forecasts[-1]["location"] = location[2]
 
     else:
         print(f"Failed to retrieve forecast data. Status code: {forecast_response.status_code}")

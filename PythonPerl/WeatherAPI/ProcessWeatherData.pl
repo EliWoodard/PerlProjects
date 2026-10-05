@@ -20,6 +20,8 @@ for my $location_forecast (@$data) {
         next;
     }
 
+    print "Location: $location_forecast->{location}\n";
+
     # Period number
     for my $period (@{$location_forecast->{properties}->{periods}}) {
         print "Period Number: $period->{number}\n";
