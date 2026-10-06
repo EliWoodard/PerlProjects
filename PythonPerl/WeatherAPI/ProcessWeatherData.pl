@@ -1,7 +1,9 @@
 use JSON;
 use Data::Dumper;
 
-open(my $fh, "<", "weather.json") or die "Cannot open weather.json: $!";
+my $file_name = $ARGV[0];
+
+open(my $fh, "<", "$file_name") or die "Could not open file '$file_name' $!";
 
 my $json_text = do {
     local $/;
@@ -22,7 +24,9 @@ for my $location_forecast (@$data) {
 
     print "Location: $location_forecast->{location}\n";
 
+    my $coolest_temperature = 9999; # Initialize to a high value
     my $average_temperature = 0;
+    my $hottest_temperature = 0;
     my $period_count = 0;
 
     # Period number
@@ -50,6 +54,14 @@ for my $location_forecast (@$data) {
             print "Is Daytime: false\n";
         }
         print "Temperature: $period->{temperature} $period->{temperatureUnit}\n";
+        # Update hottest temperature
+        if ($period->{temperature} > $hottest_temperature) {
+            $hottest_temperature = $period->{temperature};
+        }
+
+        if ($period->{temperature} < $coolest_temperature) {
+            $coolest_temperature = $period->{temperature};
+        }
         print "Probability of Precipitation: " . (defined $period->{probabilityOfPrecipitation}->{value} ? $period->{probabilityOfPrecipitation}->{value} : 0) . "%\n";
         print "Wind Speed: $period->{windSpeed}\n";
         print "Wind Direction: $period->{windDirection}\n";
@@ -64,4 +76,5 @@ for my $location_forecast (@$data) {
     }
     my $average = $average_temperature / $period_count;
     print "Average Temperature: $average\n";
+    print "Hottest Temperature: $hottest_temperature\n";
 }

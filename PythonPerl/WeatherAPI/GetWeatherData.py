@@ -41,7 +41,9 @@ for location in locations:
             "error": f"Failed to retrieve forecast data. Status code: {forecast_response.status_code}"
         })
 
-with open("weather.json", "w") as f:
+json_file = "weather.json"
+
+with open(json_file, "w") as f:
     json.dump(forecasts, f, indent=4)
 
-subprocess.run(["perl", "ProcessWeatherData.pl"], check=True)
+subprocess.run(["perl", "ProcessWeatherData.pl", json_file], check=True)
