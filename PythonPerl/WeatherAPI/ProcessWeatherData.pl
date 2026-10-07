@@ -1,19 +1,25 @@
 use JSON;
 use Data::Dumper;
 
+# Get the file name from the command line argument
 my $file_name = $ARGV[0];
 
+# Open the json file for reading
 open(my $fh, "<", "$file_name") or die "Could not open file '$file_name' $!";
 
+# Take in the entire file content and decode it as JSON
 my $json_text = do {
     local $/;
     <$fh>;
 };
 close($fh);
 
+# Decode the JSON content into a Perl data structure
 my $data = decode_json($json_text);
 
-print "Decoded JSON data successfully.\n";
+print("================================
+       WEATHER REPORT
+================================\n\n");
 
 # Iterate over each location's forecast data
 for my $location_forecast (@$data) {
@@ -22,59 +28,67 @@ for my $location_forecast (@$data) {
         next;
     }
 
-    print "Location: $location_forecast->{location}\n";
+    # Get Location name from the forecast data
+    my $location = $location_forecast->{location};
+    # Print the location name
+    print "$location\n";
+    # Print - amount of location length
+    print "-" x length($location) . "\n\n";
 
+    # Initialize temperature and rain probability tracking variables
     my $coolest_temperature = 9999; # Initialize to a high value
     my $average_temperature = 0;
     my $hottest_temperature = 0;
     my $period_count = 0;
+    my $temperature_unit = $location_forecast->{properties}->{periods}->[0]->{temperatureUnit};
+    my $highest_rain_probability = 0;
+    my $rain_probability = 0;
+    my $start_date = $location_forecast->{properties}->{periods}->[0]->{startTime};
+    $start_date =~ s/T.*//; # Extract only the date part
+    my $end_date = $location_forecast->{properties}->{periods}->[-1]->{endTime};
+    $end_date =~ s/T.*//; # Extract only the date part
 
     # Period number
     for my $period (@{$location_forecast->{properties}->{periods}}) {
-        print "Period Number: $period->{number}\n";
-        print "Period Name: $period->{name}\n";
-        my $start_time_formatted = $period->{startTime};
-        $start_time_formatted =~ s/T/ /;
-        $start_time_formatted =~ s/Z//;
-        # Convert start time to date only format
-        my $start_date_only = $start_time_formatted;
-        $start_date_only =~ s/ .*//;
-        print "Start Date Only: $start_date_only\n";
-        # Convert end time to date only format
-        my $end_time_formatted = $period->{endTime};
-        $end_time_formatted =~ s/T/ /;
-        $end_time_formatted =~ s/Z//;
-        my $end_date_only = $end_time_formatted;
-        $end_date_only =~ s/ .*//;
-        print "End Date Only: $end_date_only\n";
-        if ($period->{isDaytime}) {
-            print "Is Daytime: true\n";
-        }
-        else {
-            print "Is Daytime: false\n";
-        }
-        print "Temperature: $period->{temperature} $period->{temperatureUnit}\n";
-        # Update hottest temperature
+        # Get hottest temperature
         if ($period->{temperature} > $hottest_temperature) {
             $hottest_temperature = $period->{temperature};
         }
-
+        # Get coolest temperature
         if ($period->{temperature} < $coolest_temperature) {
             $coolest_temperature = $period->{temperature};
         }
-        print "Probability of Precipitation: " . (defined $period->{probabilityOfPrecipitation}->{value} ? $period->{probabilityOfPrecipitation}->{value} : 0) . "%\n";
-        print "Wind Speed: $period->{windSpeed}\n";
-        print "Wind Direction: $period->{windDirection}\n";
-        print "Short Forecast: $period->{shortForecast}\n";
-        print "Detailed Forecast: $period->{detailedForecast}\n";
-        print "\n";
+        # Get rain probability for the current period
+        my $probability_of_precipitation = $period->{probabilityOfPrecipitation}->{value} // 0;
+
+        # Update highest rain probability if the current period's probability is higher
+        if ($probability_of_precipitation > $highest_rain_probability) {
+            $highest_rain_probability = $probability_of_precipitation;
+        }
+
+        # Accumulate rain probability for average calculation
+        $rain_probability += $probability_of_precipitation;
 
         # Accumulate temperature for average calculation
         $average_temperature += $period->{temperature};
         $period_count++;
 
     }
-    my $average = $average_temperature / $period_count;
-    print "Average Temperature: $average\n";
-    print "Hottest Temperature: $hottest_temperature\n";
+    # Calculate average temprature propability
+    my $average_tempature = $average_temperature / $period_count;
+    # Calculate average rain probability and round down to nearest percent
+    my $average_rain_probability = int(($rain_probability / $period_count) - 0.5);
+    # Find total days the stored period count
+    my $total_days = $period_count;
+    # Print the weather report values
+    print "Total Days: $total_days\n";
+    print "Average Temperature: $average_tempature $temperature_unit\n";
+    print "Coolest Temperature: $coolest_temperature $temperature_unit\n";
+    print "Hottest Temperature: $hottest_temperature $temperature_unit\n";
+    print "Average Rain Probability: $average_rain_probability%\n";
+    print "Highest Rain Probability: $highest_rain_probability%\n\n";
 }
+
+print("================================
+       END OF REPORT
+================================\n");
