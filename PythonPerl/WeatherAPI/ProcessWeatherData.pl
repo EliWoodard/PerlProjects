@@ -7,7 +7,7 @@ my $file_name = $ARGV[0];
 # Open the json file for reading
 open(my $fh, "<", "$file_name") or die "Could not open file '$file_name' $!";
 
-# Take in the entire file content and decode it as JSON
+# Take in the entire file content and decode it as JSON. Use eval to catch any errors during decoding
 my $json_text = do {
     local $/;
     <$fh>;
@@ -15,7 +15,10 @@ my $json_text = do {
 close($fh);
 
 # Decode the JSON content into a Perl data structure
-my $data = decode_json($json_text);
+my $data = eval { decode_json($json_text) };
+if ($@) {
+    die "Failed to decode JSON: $@";
+}
 
 print("================================
        WEATHER REPORT
@@ -23,8 +26,8 @@ print("================================
 
 # Iterate over each location's forecast data
 for my $location_forecast (@$data) {
-    if (exists $location_forecast->{error}) {
-        print "Error: $location_forecast->{error}\n";
+    if (exists $location_forecast->{error} || !defined $location_forecast->{properties}->{periods}) {
+        print "Error: $location_forecast->{error} or missing periods\n";
         next;
     }
 
@@ -74,15 +77,15 @@ for my $location_forecast (@$data) {
         $period_count++;
 
     }
-    # Calculate average temprature propability
-    my $average_tempature = $average_temperature / $period_count;
+    # Calculate average temperature
+    my $average_temperature_value = $average_temperature / $period_count;
     # Calculate average rain probability and round down to nearest percent
     my $average_rain_probability = int(($rain_probability / $period_count) - 0.5);
-    # Find total days the stored period count
-    my $total_days = $period_count;
+    # Find total forecast periods from the stored period count
+    my $total_forecast_periods = $period_count;
     # Print the weather report values
-    print "Total Days: $total_days\n";
-    print "Average Temperature: $average_tempature $temperature_unit\n";
+    print "Total Forecast Periods: $total_forecast_periods\n";
+    print "Average Temperature: $average_temperature_value $temperature_unit\n";
     print "Coolest Temperature: $coolest_temperature $temperature_unit\n";
     print "Hottest Temperature: $hottest_temperature $temperature_unit\n";
     print "Average Rain Probability: $average_rain_probability%\n";
