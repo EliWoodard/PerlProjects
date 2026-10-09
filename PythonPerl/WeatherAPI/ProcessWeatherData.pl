@@ -20,6 +20,11 @@ if ($@) {
     die "Failed to decode JSON: $@";
 }
 
+# Open a CSV file for writing the weather report
+open(my $csv_fh, ">", "weather_report.csv")
+    or die "Could not open file 'weather_report.csv': $!";
+print $csv_fh "Location,Forecast Periods,Average Temperature,Coolest Temperature,Hottest Temperature,Average Rain Probability,Highest Rain Probability\n";
+
 print("================================
        WEATHER REPORT
 ================================\n\n");
@@ -90,7 +95,12 @@ for my $location_forecast (@$data) {
     print "Hottest Temperature: $hottest_temperature $temperature_unit\n";
     print "Average Rain Probability: $average_rain_probability%\n";
     print "Highest Rain Probability: $highest_rain_probability%\n\n";
+
+    # Write to the weather report, tracking trends
+    print $csv_fh "\"$location\",$total_forecast_periods,$average_temperature_value,$coolest_temperature,$hottest_temperature,$average_rain_probability,$highest_rain_probability\n";
 }
+
+close($csv_fh);
 
 print("================================
        END OF REPORT
