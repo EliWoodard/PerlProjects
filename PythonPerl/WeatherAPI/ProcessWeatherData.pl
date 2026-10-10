@@ -20,10 +20,14 @@ if ($@) {
     die "Failed to decode JSON: $@";
 }
 
-# Open a CSV file for writing the weather report
-open(my $csv_fh, ">", "weather_report.csv")
+# Open/Create a CSV file for writing the weather report
+open(my $csv_fh, ">>", "weather_report.csv")
     or die "Could not open file 'weather_report.csv': $!";
-print $csv_fh "Location,Forecast Periods,Average Temperature,Coolest Temperature,Hottest Temperature,Average Rain Probability,Highest Rain Probability\n";
+
+# Check if the CSV file is empty and write the header if it is
+if (-s "weather_report.csv" == 0) {
+    print $csv_fh "Location,Forecast Periods,Average Temperature,Coolest Temperature,Hottest Temperature,Average Rain Probability,Highest Rain Probability,StartDate,EndDate\n";
+}
 
 print("================================
        WEATHER REPORT
@@ -97,7 +101,7 @@ for my $location_forecast (@$data) {
     print "Highest Rain Probability: $highest_rain_probability%\n\n";
 
     # Write to the weather report, tracking trends
-    print $csv_fh "\"$location\",$total_forecast_periods,$average_temperature_value,$coolest_temperature,$hottest_temperature,$average_rain_probability,$highest_rain_probability\n";
+    print $csv_fh "\"$location\",$total_forecast_periods,$average_temperature_value,$coolest_temperature,$hottest_temperature,$average_rain_probability,$highest_rain_probability,\"$start_date\",\"$end_date\"\n";
 }
 
 close($csv_fh);
@@ -105,3 +109,6 @@ close($csv_fh);
 print("================================
        END OF REPORT
 ================================\n");
+
+# Run python script to generate weather trends
+system("python3", "ProcessWeatherTrends.py");
