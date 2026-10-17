@@ -65,6 +65,10 @@ A web scraping and analysis application that collects country information from a
 
 **Key concepts:** HTML parsing, web scraping, data extraction, sorting, filtering, and statistical analysis.
 
+### 5. Erdos Straus Conjecture
+
+Works on proving this theory wrong / right for the first 10,000 values
+
 ## Technologies & Tools
 
 | Technology | Purpose |
