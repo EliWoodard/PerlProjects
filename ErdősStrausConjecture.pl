@@ -11,6 +11,9 @@ for (my $i = 2; $i <= $numTestCases; $i++) {
     my $y = 0;
     my $z = 0;
 
+    # Original equation 3/n = 1/x + 1/y + 1/z
+    # Modified equation 3xyz = n(xy + xz + yz)
+
     while($searching) {
         if (1/$increment == $goalValue) {
             $increment++;
