@@ -1,4 +1,4 @@
-my $numTestCases = 4;
+my $numTestCases = 8;
 
 for (my $i = 2; $i <= $numTestCases; $i++) {
 
@@ -11,14 +11,11 @@ for (my $i = 2; $i <= $numTestCases; $i++) {
     my $y = 0;
     my $z = 0;
 
-    # Original equation 3/n = 1/x + 1/y + 1/z
-    # Modified equation 3xyz = n(xy + xz + yz)
+    # Original equation 4/n = 1/x + 1/y + 1/z
+    # Modified equation 4xyz = n(xy + xz + yz)
 
     while($searching) {
-        if (1/$increment == $goalValue) {
-            $increment++;
-        }
-        elsif (1/$increment < $goalValue) {
+        if (1/$increment < $goalValue) {
             $searching = 0;
         }
         else {
@@ -45,8 +42,11 @@ for (my $i = 2; $i <= $numTestCases; $i++) {
 
     $searching = 1;
 
+    ## Before entering the third loop, calculate that denominator. Use % to check divisibility.
+    ## Reject impossible pairs instead of hanging indefinitely.
+
     while($searching) {
-        if (1/$increment <= $remainder) {
+        if (4*$x*$y*$increment == $i*($x*$y + $x*$increment + $y*$increment)) {
             $searching = 0;
         }
         else {
