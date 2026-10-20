@@ -1,3 +1,6 @@
+use strict;
+use warnings;
+
 my $numTestCases = 8;
 
 for (my $i = 2; $i <= $numTestCases; $i++) {
@@ -14,19 +17,11 @@ for (my $i = 2; $i <= $numTestCases; $i++) {
     # Original equation 4/n = 1/x + 1/y + 1/z
     # Modified equation 4xyz = n(xy + xz + yz)
 
-    while($searching) {
-        if (1/$increment < $goalValue) {
-            $searching = 0;
-        }
-        else {
-            $increment++;
-        }
-    }
+    # Find the smallest x value that exists
+    # x > n / 4
+    $x = FindX($i);
 
-    $remainder = $goalValue - 1/$increment;
-    $x = $increment;
-
-    $searching = 1;
+    $remainder = $goalValue - 1/$x;
 
     while($searching) {
         if (1/$increment < $remainder) {
@@ -45,6 +40,10 @@ for (my $i = 2; $i <= $numTestCases; $i++) {
     ## Before entering the third loop, calculate that denominator. Use % to check divisibility.
     ## Reject impossible pairs instead of hanging indefinitely.
 
+    if ($i % 4 == 0) {
+        $increment = $i / 4;
+    }
+
     while($searching) {
         if (4*$x*$y*$increment == $i*($x*$y + $x*$increment + $y*$increment)) {
             $searching = 0;
@@ -57,4 +56,9 @@ for (my $i = 2; $i <= $numTestCases; $i++) {
     $z = $increment;
 
     print("Goal: $goalValue, Solution: 1/$x + 1/$y + 1/$z\n");
+}
+
+sub FindX {
+    my ($value) = @_;
+    return int($value / 4) + 1;
 }
