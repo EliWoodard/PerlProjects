@@ -27,7 +27,7 @@ sub IsPrime {
     my $num = shift;
     my $isPrime = 1;
 
-    for (my $j = 2; $j <= $num / 2; $j++) {
+    for (my $j = 2; $j <= sqrt($num) / 2; $j++) {
         if ($num % $j == 0) {
             $isPrime = 0;
             last;
