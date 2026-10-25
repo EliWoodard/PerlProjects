@@ -1,19 +1,31 @@
 # Every even integer greater than 2 can be expressed as the sum of two primes.
 my $numTestCases = 100000;
-
 my $isPrime = 1;
 
 for (my $i = 4; $i <= $numTestCases; $i += 2) {
-    $isPrime = IsPrime($i);
-
     my $topWindow = $i - 2;
     my $bottomWindow = 2;
 
+   my %primes;
+
     while ($bottomWindow <= $topWindow) {
-        if (IsPrime($bottomWindow) && IsPrime($topWindow)) {
+        # Check bottom number
+        if (!exists $primes{$bottomWindow}) {
+            $primes{$bottomWindow} = IsPrime($bottomWindow);
+        }
+        my $bottomIsPrime = $primes{$bottomWindow};
+
+        # Check top number
+        if (!exists $primes{$topWindow}) {
+            $primes{$topWindow} = IsPrime($topWindow);
+        }
+        my $topIsPrime = $primes{$topWindow};
+
+        if ($bottomIsPrime && $topIsPrime) {
             print("$i = $bottomWindow(prime) + $topWindow(prime)\n");
             last;
         }
+
         $bottomWindow++;
         $topWindow--;
     }
