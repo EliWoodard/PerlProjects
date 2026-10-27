@@ -25,21 +25,20 @@ my $failure = 0;
 my $t = localtime;
 my $current_time = $t->strftime('%H:%M:%S');
 
+# Generate all primes numbers up to the maximum number we will check
+for (my $i = 2; $i <= $numTestCases; $i++) {
+    if (!exists $primes{$i}) {
+        $primes{$i} = IsPrime($i);
+    }
+}
+
+# Loop through all even integers from 4 to the user-specified number of test cases
 for (my $i = 4; $i <= $numTestCases; $i += 2) {
     my $topWindow = $i - 2;
     my $bottomWindow = 2;
 
     while ($bottomWindow <= $topWindow) {
-        # Check bottom number
-        if (!exists $primes{$bottomWindow}) {
-            $primes{$bottomWindow} = IsPrime($bottomWindow);
-        }
         my $bottomIsPrime = $primes{$bottomWindow};
-
-        # Check top number
-        if (!exists $primes{$topWindow}) {
-            $primes{$topWindow} = IsPrime($topWindow);
-        }
         my $topIsPrime = $primes{$topWindow};
 
         if ($bottomIsPrime && $topIsPrime) {
