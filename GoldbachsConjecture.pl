@@ -17,18 +17,24 @@ if ($userInput <= 0) {
 
 my $failure = 0;
 my $numTestCases = int(($userInput + 1) * 2);
-my %primes;
 my $success = 0;
 
 # Get the current local time and format it
 my $t = localtime;
 my $current_time = $t->strftime('%H:%M:%S');
 
-# Generate all primes numbers up to the maximum number we will check
-$primes{2} = 1; # 2 is prime
+my @primes = (1) x ($numTestCases + 1);
+$primes[0] = 0;
+$primes[1] = 0;
 
-for (my $i = 3; $i <= $numTestCases; $i += 2) {
-    $primes{$i} = IsPrime($i);
+my $sqrtMax = int(sqrt($numTestCases));
+
+for (my $i = 2; $i <= $sqrtMax; $i++) {
+    if ($primes[$i]) {
+        for (my $j = $i * $i; $j <= $numTestCases; $j += $i) {
+            $primes[$j] = 0;
+        }
+    }
 }
 
 # Loop through all even integers from 4 to the user-specified number of test cases
@@ -37,8 +43,8 @@ for (my $i = 4; $i <= $numTestCases; $i += 2) {
     my $bottomWindow = 2;
 
     while ($bottomWindow <= $topWindow) {
-        my $bottomIsPrime = $primes{$bottomWindow};
-        my $topIsPrime = $primes{$topWindow};
+        my $bottomIsPrime = $primes[$bottomWindow];
+        my $topIsPrime = $primes[$topWindow];
 
         if ($bottomIsPrime && $topIsPrime) {
             $success++;
@@ -61,22 +67,6 @@ print("Elapsed time: " . elapsed_time($current_time, $end_time) . "\n");
 
 print("Success: $success\n");
 print("Failure: $failure\n");
-
-sub IsPrime {
-    my $num = shift;
-    my $isPrime = 1;
-
-    my $sqrtNum = sqrt($num); 
-
-    for (my $j = 2; $j <= $sqrtNum; $j+= ($j == 2 ? 1 : 2)) {
-        if ($num % $j == 0) {
-            $isPrime = 0;
-            last;
-        }
-    }
-
-    return $isPrime;
-}
 
 sub elapsed_time {
     my ($start, $end) = @_;
